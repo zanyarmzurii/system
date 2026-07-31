@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستەمێ کاشێریێ و ژمێریاریێ - کاشێرپڕۆ</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-store brand-icon"></i>
+                <h2>کاشێر<span>پڕۆ ERP</span></h2>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" onclick="switchPage('pos')">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span>شاشا فرۆشتنێ</span>
+                </button>
+                <button class="nav-item" onclick="switchPage('inventory')">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                    <span>کۆگا و کاڵا</span>
+                </button>
+                <button class="nav-item" onclick="switchPage('debts')">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                    <span>سیستەمێ قەرزان</span>
+                </button>
+                <button class="nav-item" onclick="switchPage('reports')">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>جەرد و ڕاپۆرت</span>
+                </button>
+                <button class="nav-item" onclick="openCustomerScreen()">
+                    <i class="fa-solid fa-tv"></i>
+                    <span>شاشا کڕیاری</span>
+                </button>
+            </nav>
+
+            <div class="user-profile">
+                <div class="avatar">کـ</div>
+                <div class="user-info">
+                    <h4>کاشێرێ چالاک</h4>
+                    <p>ڕێڤەبەرێ گشتی</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 🛒 1. بەشێ شاشا فرۆشتنێ -->
+        <main class="main-content page-section active-page" id="posView">
+            <header class="top-bar">
+                <div class="search-box">
+                    <i class="fa-solid fa-barcode barcode-icon"></i>
+                    <input type="text" id="barcodeInput" placeholder="کۆدێ کاڵایی یان بارکۆدی سکێن بکە..." autofocus>
+                </div>
+            </header>
+            <section class="products-grid" id="productsGrid"></section>
+        </main>
+
+        <!-- 📦 2. بەشێ کۆگا -->
+        <main class="main-content page-section" id="inventoryView" style="display: none;">
+            <div class="inventory-header">
+                <h2><i class="fa-solid fa-boxes-stacked"></i> بەڕێوەبرتنا کۆگایێ</h2>
+                <button class="btn-add-product" onclick="openProductModal()">
+                    <i class="fa-solid fa-plus"></i> زێدەکرنا کاڵایێ نوو
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>کۆد/بارکۆد</th>
+                            <th>ناوی کاڵایی</th>
+                            <th>تێچووی کڕین (د.ع)</th>
+                            <th>نرخی فرۆشتن (د.ع)</th>
+                            <th>بڕ ل کۆگایێ</th>
+                            <th>کردار</th>
+                        </tr>
+                    </thead>
+                    <tbody id="inventoryTableBody"></tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- 💰 3. بەشێ قەرزان (Debts) -->
+        <main class="main-content page-section" id="debtsView" style="display: none;">
+            <div class="inventory-header">
+                <h2><i class="fa-solid fa-hand-holding-dollar"></i> بەڕێوەبرتنا قەرزان</h2>
+                <button class="btn-add-product" onclick="openDebtModal()">
+                    <i class="fa-solid fa-user-plus"></i> زێدەکرنا قەرزێ نوو
+                </button>
+            </div>
+            <div class="table-container">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>ناوی قەرزار</th>
+                            <th>ژمارا تەلەفۆنێ</th>
+                            <th>کۆی قەرز (د.ع)</th>
+                            <th>بەروار و دەم</th>
+                            <th>وەعدا دانەوەیێ</th>
+                            <th>کردار</th>
+                        </tr>
+                    </thead>
+                    <tbody id="debtsTableBody"></tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- 📊 4. بەشێ جەرد و ڕاپۆرت (Reports & Expenses) -->
+        <main class="main-content page-section" id="reportsView" style="display: none;">
+            <h2><i class="fa-solid fa-chart-pie"></i> جەرد و ڕاپۆرتی دارایی</h2>
+            
+            <!-- کارتێن زانیاری -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px;">
+                <div style="background: #1e293b; padding: 20px; border-radius: 10px; border-right: 4px solid #38bdf8;">
+                    <span style="color: #94a3b8; font-size: 13px;">کۆی فرۆشتن</span>
+                    <h2 id="repTotalSales" style="color: #38bdf8; margin-top: 5px;">0 د.ع</h2>
+                </div>
+                <div style="background: #1e293b; padding: 20px; border-radius: 10px; border-right: 4px solid #ef4444;">
+                    <span style="color: #94a3b8; font-size: 13px;">کۆی مەسروفات</span>
+                    <h2 id="repTotalExpenses" style="color: #ef4444; margin-top: 5px;">0 د.ع</h2>
+                </div>
+                <div style="background: #1e293b; padding: 20px; border-radius: 10px; border-right: 4px solid #f59e0b;">
+                    <span style="color: #94a3b8; font-size: 13px;">تێچووی کاڵاکان</span>
+                    <h2 id="repTotalCost" style="color: #f59e0b; margin-top: 5px;">0 د.ع</h2>
+                </div>
+                <div style="background: #1e293b; padding: 20px; border-radius: 10px; border-right: 4px solid #10b981;">
+                    <span style="color: #94a3b8; font-size: 13px;">قازانجی پاک (صافي)</span>
+                    <h2 id="repNetProfit" style="color: #10b981; margin-top: 5px;">0 د.ع</h2>
+                </div>
+            </div>
+
+            <!-- بەشێ مەسروفات -->
+            <div style="margin-top: 30px; background: #1e293b; padding: 20px; border-radius: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3><i class="fa-solid fa-file-invoice-dollar"></i> تۆمارکرنا مەسروفاتێن هەیڤانە (کرێ، کارەبا، ئاڤ)</h3>
+                    <button class="btn-add-product" onclick="openExpenseModal()"><i class="fa-solid fa-plus"></i> زێدەکرنا مەسروفاتی</button>
+                </div>
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>جۆری مەسروفات (کرێ / کارەبا...)</th>
+                            <th>بڕی پارە (د.ع)</th>
+                            <th>بەروار</th>
+                            <th>تێبینی</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expensesTableBody"></tbody>
+                </table>
+            </div>
+        </main>
+
+        <!-- Cart Section -->
+        <aside class="cart-section" id="cartSection">
+            <div class="cart-header">
+                <h3><i class="fa-solid fa-receipt"></i> پسوولا نوو</h3>
+                <span class="invoice-number" id="invoiceNum">#INV-1001</span>
+            </div>
+
+            <div class="cart-items" id="cartItems"></div>
+
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>کۆی گشتی:</span>
+                    <span id="subTotal">0 د.ع</span>
+                </div>
+                <div class="summary-row">
+                    <span>داشکاندن (د.ع):</span>
+                    <input type="number" id="discountInput" value="0" style="width: 80px; text-align: center; background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 5px;" oninput="renderCart()">
+                </div>
+                <div class="summary-row">
+                    <span>جۆرێ پارەدانێ:</span>
+                    <select id="paymentType" style="background: #1e293b; color: #fff; border: 1px solid #334155; border-radius: 5px; padding: 2px 5px;">
+                        <option value="نەقد">نەقد (کاش)</option>
+                        <option value="قەرز">قەرز (دەین)</option>
+                        <option value="کارت / فاستپەی">کارت / فاستپەی</option>
+                    </select>
+                </div>
+                <div class="summary-row total-row">
+                    <span>کۆی تەمام:</span>
+                    <span id="grandTotal">0 د.ع</span>
+                </div>
+
+                <div class="payment-buttons">
+                    <button class="btn-pay" onclick="processPayment()">
+                        <i class="fa-solid fa-print"></i> پارەدان و چاپکرن
+                    </button>
+                    <button class="btn-clear" onclick="clearCart()">
+                        <i class="fa-solid fa-trash-can"></i> پاشگەزبوون
+                    </button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Modal زێدەکرنا کاڵایی -->
+    <div class="modal-overlay" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>زێدەکرنا کاڵایێ نوو</h3></div>
+            <form onsubmit="saveProduct(event)">
+                <div class="form-group"><label>ناوی کاڵایی:</label><input type="text" id="pName" required></div>
+                <div class="form-row">
+                    <div class="form-group"><label>کۆد / بارکۆد:</label><input type="text" id="pCode" required></div>
+                    <div class="form-group"><label>تێچووی کڕین (د.ع):</label><input type="number" id="pCost" required placeholder="تێچووی سەر خۆت"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group"><label>نرخی فرۆشتن (د.ع):</label><input type="number" id="pPrice" required></div>
+                    <div class="form-group"><label>بڕ ل کۆگایێ:</label><input type="number" id="pStock" required></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal('productModal')">پاشگەزبوون</button>
+                    <button type="submit" class="btn-save">پاشەکەوتکرن</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal زێدەکرنا مەسروفاتی -->
+    <div class="modal-overlay" id="expenseModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>تۆمارکرنا مەسروفاتێ نوو</h3></div>
+            <form onsubmit="saveExpense(event)">
+                <div class="form-group">
+                    <label>جۆری مەسروفات:</label>
+                    <select id="expType" style="padding:10px; background:#0f172a; color:#fff; border:1px solid #334155; border-radius:6px;">
+                        <option value="کرێیا جهی">کرێیا جهی</option>
+                        <option value="مووچەیێ کرێکاران">مووچەیێ کرێکاران</option>
+                        <option value="کارەبایا گشتی">کارەبایا گشتی</option>
+                        <option value="کارەبایا مۆلیدەیێ">کارەبایا مۆلیدەیێ</option>
+                        <option value="مەسروفاتی ئاڤێ">مەسروفاتی ئاڤێ</option>
+                        <option value="مەسروفاتێن تر">مەسروفاتێن تر</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>بڕی پارە (د.ع):</label><input type="number" id="expAmount" required></div>
+                <div class="form-group"><label>تێبینی / ڕوونکرن:</label><input type="text" id="expNote" placeholder="ملا: کرێیا هەیڤا ٧"></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal('expenseModal')">پاشگەزبوون</button>
+                    <button type="submit" class="btn-save">پاشەکەوتکرن</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal زێدەکرنا قەرزێ نوو -->
+    <div class="modal-overlay" id="debtModal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>تۆمارکرنا قەرزێ نوو</h3></div>
+            <form onsubmit="saveDebt(event)">
+                <div class="form-group"><label>ناوی قەرزار:</label><input type="text" id="dName" required></div>
+                <div class="form-group"><label>ژمارا تەلەفۆنێ:</label><input type="text" id="dPhone" required></div>
+                <div class="form-group"><label>بڕی قەرز (د.ع):</label><input type="number" id="dAmount" required></div>
+                <div class="form-group"><label>بەرواری وەرگرتنی قەرزەکە:</label><input type="date" id="dDueDate" required></div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal('debtModal')">پاشگەزبوون</button>
+                    <button type="submit" class="btn-save">پاشەکەوتکرن</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 🧾 پسوولا چاپکرنێ -->
+    <div id="printableReceipt" class="printable-receipt">
+        <div class="receipt-header">
+            <h2>کاشێرپڕۆ ERP</h2>
+            <p>مارکێت / کۆگایا گشتی</p>
+            <p id="rInvoiceNo">ژمارە: #INV-000</p>
+            <p id="rDate">بەروار: --/--/----</p>
+            <p id="rPayType">جۆری پارەدان: نەقد</p>
+        </div>
+        <hr>
+        <table class="receipt-table">
+            <thead>
+                <tr><th>کاڵا</th><th>دانە</th><th>نرخ</th><th>کۆیی</th></tr>
+            </thead>
+            <tbody id="receiptTableBody"></tbody>
+        </table>
+        <hr>
+        <div class="receipt-totals">
+            <div class="r-row"><span>کۆی گشتی:</span><span id="rTotal">0 د.ع</span></div>
+            <div class="r-row" id="rDiscountRow"><span>داشکاندن:</span><span id="rDiscount">0 د.ع</span></div>
+            <div class="r-row" style="font-size: 15px;"><span>کۆی کۆتایی:</span><span id="rGrandTotal">0 د.ع</span></div>
+        </div>
+        <hr>
+        <div class="receipt-footer"><p>سوپاس بۆ کڕینا وە! 🌹</p></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
