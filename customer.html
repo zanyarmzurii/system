@@ -4,44 +4,281 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>شاشا کڕیاری - کاشێرپڕۆ ERP</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        body { background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); display: flex; height: 100vh; margin: 0; overflow: hidden; }
-        .customer-container { display: grid; grid-template-columns: 1fr 400px; width: 100%; height: 100%; }
-        .customer-main { padding: 40px; display: flex; flex-direction: column; justify-content: space-between; }
-        .customer-welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #94a3b8; text-align: center; }
-        .customer-welcome i { font-size: 80px; color: #38bdf8; margin-bottom: 20px; }
-        .customer-cart-list { flex-grow: 1; overflow-y: auto; margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
-        .customer-cart-item { background-color: rgba(30, 41, 59, 0.8); border: 1px solid #334155; padding: 18px; border-radius: 14px; display: flex; justify-content: space-between; align-items: center; }
-        .customer-side-banner { background-color: #0b1120; border-right: 1px solid #334155; padding: 30px; display: flex; flex-direction: column; justify-content: space-between; }
-        .total-display-card { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #000; padding: 30px; border-radius: 20px; text-align: center; }
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --bg-side: #0b1120;
+            --accent-blue: #38bdf8;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #334155;
+            --font-family: 'Noto Kufi Arabic', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .customer-container {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* --- Main Display Area --- */
+        .customer-main {
+            padding: 30px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+        }
+
+        .brand-header h1 {
+            color: var(--accent-blue);
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .item-badge {
+            background: var(--border-color);
+            color: var(--text-primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .customer-welcome {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+
+        .customer-welcome i {
+            font-size: 80px;
+            color: var(--accent-blue);
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .customer-welcome h2 {
+            font-size: 2rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .customer-cart-list {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-top: 20px;
+            padding-left: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .customer-cart-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(8px);
+            padding: 18px 24px;
+            border-radius: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .customer-cart-item .item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .customer-cart-item .item-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .customer-cart-item .item-sub {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .customer-cart-item .item-total {
+            font-size: 1.3rem;
+            color: var(--accent-green);
+            font-weight: bold;
+        }
+
+        /* --- Side Banner & Totals --- */
+        .customer-side-banner {
+            background-color: var(--bg-side);
+            border-right: 2px solid var(--border-color);
+            padding: 35px 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: -10px 0 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .promo-box {
+            text-align: center;
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            padding: 30px 20px;
+            border-radius: 18px;
+            border: 1px solid #3730a3;
+        }
+
+        .promo-box i {
+            font-size: 3.5rem;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+        }
+
+        .promo-box h2 {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .promo-box p {
+            color: #c7d2fe;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .summary-card-container {
+            background: var(--bg-main);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+        }
+
+        .total-display-card {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: #000;
+            padding: 25px 20px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 5px;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);
+        }
+
+        .total-display-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        .total-display-card h1 {
+            font-size: 2.3rem;
+            font-weight: 900;
+            margin-top: 5px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
+
     <div class="customer-container">
+        <!-- Main Area: Products List -->
         <div class="customer-main">
-            <h1 style="color: #38bdf8;"><i class="fa-solid fa-store"></i> کاشێرپڕۆ ERP</h1>
+            <div class="brand-header">
+                <h1><i class="fa-solid fa-store"></i> کاشێرپڕۆ ERP</h1>
+                <span id="itemCount" class="item-badge">0 دانە</span>
+            </div>
+
+            <!-- Welcome Screen when cart is empty -->
             <div id="welcomeScreen" class="customer-welcome">
                 <i class="fa-solid fa-basket-shopping"></i>
                 <h2>بەخێربێن بۆ مارکێتێ مە!</h2>
                 <p>زانیاریی کڕینەکانتان ڕاستەوخۆ لێرە دیار دەبێت.</p>
             </div>
+
+            <!-- Cart Items Container -->
             <div id="customerCartList" class="customer-cart-list" style="display: none;"></div>
         </div>
+
+        <!-- Side Banner & Payment Totals -->
         <div class="customer-side-banner">
-            <div>
-                <h2 style="color: #38bdf8;">بەخێر بێن 🌹</h2>
+            <div class="promo-box">
+                <i class="fa-solid fa-heart"></i>
+                <h2>سوپاس بۆ کڕینی ئێوە</h2>
+                <p>هەردەم ئامادەین بۆ پێشکەشکردنی باشترین خزمەتگوزاری و نوێترین بەرهەمەکان.</p>
             </div>
-            <div class="total-display-card">
-                <h3>کۆی گشتیی پارە:</h3>
-                <h1 id="customerGrandTotal" style="font-size: 36px; font-weight: 900;">0 د.ع</h1>
+
+            <div class="summary-card-container">
+                <div class="summary-line">
+                    <span>کۆی گشتی:</span>
+                    <span id="custSubTotal">0 د.ع</span>
+                </div>
+                <div class="summary-line">
+                    <span>داشکاندن:</span>
+                    <span id="custDiscount" style="color: var(--accent-red);">0 د.ع</span>
+                </div>
+
+                <div class="total-display-card">
+                    <h3>کۆی کۆتایی بۆ پرداخت:</h3>
+                    <h1 id="customerGrandTotal">0 د.ع</h1>
+                </div>
             </div>
         </div>
     </div>
+
     <script>
+        // 1. BroadcastChannel - بۆ بەستنەوەی ڕاستەوخۆ و خێرا
         const posChannel = new BroadcastChannel('pos_channel');
+
         posChannel.onmessage = function (event) {
             const data = event.data;
             if (data.type === 'UPDATE_CART') {
@@ -51,36 +288,76 @@
             }
         };
 
-        function updateCustomerDisplay(cart, total) {
+        // 2. LocalStorage Listening (Fallback بۆ دڵنیایی زیاتر)
+        function checkLocalStorageFallback() {
+            const cartData = JSON.parse(localStorage.getItem('pos_cart') || '[]');
+            const discountData = parseFloat(localStorage.getItem('pos_discount') || '0');
+
+            if (cartData.length > 0) {
+                let subTotal = cartData.reduce((acc, item) => acc + (item.price * item.qty), 0);
+                let grandTotal = Math.max(0, subTotal - discountData);
+                updateCustomerDisplay(cartData, grandTotal, discountData);
+            } else if (document.getElementById('customerCartList').style.display !== 'none' && cartData.length === 0) {
+                resetCustomerDisplay();
+            }
+        }
+
+        window.addEventListener('storage', checkLocalStorageFallback);
+
+        // UI Render Engine
+        function updateCustomerDisplay(cart, grandTotal, discountVal = null) {
             const welcomeScreen = document.getElementById('welcomeScreen');
             const cartList = document.getElementById('customerCartList');
             const totalDisplay = document.getElementById('customerGrandTotal');
+            const subTotalDisplay = document.getElementById('custSubTotal');
+            const discountDisplay = document.getElementById('custDiscount');
+            const itemCount = document.getElementById('itemCount');
 
-            if (!cart || cart.length === 0) { resetCustomerDisplay(); return; }
+            if (!cart || cart.length === 0) {
+                resetCustomerDisplay();
+                return;
+            }
 
             welcomeScreen.style.display = 'none';
             cartList.style.display = 'flex';
             cartList.innerHTML = '';
 
+            let subTotal = 0;
+            let totalQty = 0;
+
             cart.forEach(item => {
+                const itemTotal = item.price * item.qty;
+                subTotal += itemTotal;
+                totalQty += item.qty;
+
                 const div = document.createElement('div');
                 div.className = 'customer-cart-item';
                 div.innerHTML = `
-                    <div>
-                        <div style="font-size: 18px; font-weight: bold;">${item.name}</div>
-                        <div style="color: #94a3b8; font-size: 13px;">${item.price.toLocaleString()} د.ع x ${item.qty}</div>
+                    <div class="item-info">
+                        <div class="item-title">${item.name}</div>
+                        <div class="item-sub">${item.qty} x ${item.price.toLocaleString()} د.ع</div>
                     </div>
-                    <div style="font-size: 20px; color: #10b981; font-weight: bold;">${(item.price * item.qty).toLocaleString()} د.ع</div>
+                    <div class="item-total">${itemTotal.toLocaleString()} د.ع</div>
                 `;
                 cartList.appendChild(div);
             });
-            totalDisplay.innerText = `${total.toLocaleString()} د.ع`;
+
+            const discount = (discountVal !== null) ? discountVal : (subTotal - grandTotal);
+
+            subTotalDisplay.innerText = subTotal.toLocaleString() + ' د.ع';
+            discountDisplay.innerText = (discount > 0 ? discount : 0).toLocaleString() + ' د.ع';
+            totalDisplay.innerText = `${(grandTotal > 0 ? grandTotal : 0).toLocaleString()} د.ع`;
+            itemCount.innerText = `${totalQty} دانە`;
         }
 
         function resetCustomerDisplay() {
             document.getElementById('welcomeScreen').style.display = 'flex';
             document.getElementById('customerCartList').style.display = 'none';
+            document.getElementById('customerCartList').innerHTML = '';
+            document.getElementById('custSubTotal').innerText = '0 د.ع';
+            document.getElementById('custDiscount').innerText = '0 د.ع';
             document.getElementById('customerGrandTotal').innerText = '0 د.ع';
+            document.getElementById('itemCount').innerText = '0 دانە';
         }
     </script>
 </body>
